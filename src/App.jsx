@@ -1,27 +1,29 @@
-import { useShallow } from "zustand/react/shallow";
 import "./App.css";
+import Subscribe from "./components/Subscribe";
 import useStore from "./store";
-import Count from "./components/Count";
-import Reset from "./components/reset";
+import { useEffect } from "react";
 
 function App() {
-  const { increase, decrease } = useStore(
-    useShallow((state) => ({
-      increase: state.increase,
-      decrease: state.decrease,
-    }))
-  );
+  const getUsers = useStore((state) => state.getUsers);
+  const deleteUser = useStore((state) => state.deleteUser);
+  const users = useStore((state) => state.users);
+
+  useEffect(() => {
+    getUsers();
+  }, [getUsers]);
 
   return (
     <>
       <div style={{ textAlign: "center", margin: "1em" }}>
-        <h1>Count</h1>
-        {/* <div>{count}</div> */}
-        <Count />
-        <button onClick={() => increase()}>Increase</button>
-        <button onClick={() => decrease()}>Decrease</button>
+        <h1>User</h1>
+        <Subscribe />
+        {users.map((user) => (
+          <div key={user.id}>
+            {user.name}
+            <span onClick={() => deleteUser(user.id)}>X</span>
+          </div>
+        ))}
       </div>
-      <Reset />
     </>
   );
 }
